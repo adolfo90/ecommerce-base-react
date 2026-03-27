@@ -1,43 +1,52 @@
-import { useContext, useState, useRef } from 'react'
-import { Link, Navigate } from 'react-router-dom'
-import { ShoppingCartContext } from '../../Context'
-import Layout from '../../Components/Layout'
+'use client'
 
-function SignIn() {
+import { useContext, useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { ShoppingCartContext } from '@/app/providers'
+import Layout from '@/app/components/Layout'
+
+export default function SignIn() {
   const context = useContext(ShoppingCartContext)
+  const router = useRouter()
   const [view, setView] = useState('user-info')
-  const form = useRef(null)
+  const form = useRef<HTMLFormElement>(null)
+  const [parsedAccount, setParsedAccount] = useState<any>({})
 
-  // Account
-  const account = localStorage.getItem('account')
-  const parsedAccount = JSON.parse(account)
-  // Has an account
+  useEffect(() => {
+    const account = localStorage.getItem('account')
+    if (account) {
+      setParsedAccount(JSON.parse(account))
+    }
+  }, [])
+
   const noAccountInLocalStorage = parsedAccount ? Object.keys(parsedAccount).length === 0 : true
-  const noAccountInLocalState = context.account ? Object.keys(context.account).length === 0 : true
+  const noAccountInLocalState = context?.account ? Object.keys(context.account).length === 0 : true
   const hasUserAnAccount = !noAccountInLocalStorage || !noAccountInLocalState
 
   const handleSignIn = () => {
     const stringifiedSignOut = JSON.stringify(false)
     localStorage.setItem('sign-out', stringifiedSignOut)
-    context.setSignOut(false)
-    // Redirect
-    return <Navigate replace to={'/'} />
+    context?.setSignOut(false)
+    router.push('/')
   }
 
-  const createAnAccount = () => {
-		const formData = new FormData(form.current)
-		const data = {
-			name: formData.get('name'),
-			email: formData.get('email'),
-			password: formData.get('password')
-		}
-    // Create account
+  const createAnAccount = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!form.current) return
+
+    const formData = new FormData(form.current)
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      password: formData.get('password')
+    }
+
     const stringifiedAccount = JSON.stringify(data)
     localStorage.setItem('account', stringifiedAccount)
-    context.setAccount(data)
-    // Sign In
+    context?.setAccount(data as any)
     handleSignIn()
-	}
+  }
 
   const renderLogIn = () => {
     return (
@@ -50,17 +59,14 @@ function SignIn() {
           <span className='font-light text-sm'>Password: </span>
           <span className='text-sm'>{parsedAccount?.password}</span>
         </p>
-        <Link
-          to="/">
-          <button
-            className='bg-black disabled:bg-black/40 text-white w-full rounded-lg py-3 mt-2'
-            onClick={() => handleSignIn()}
-            disabled={!hasUserAnAccount}>
-            Log in
-          </button>
-        </Link>
+        <button
+          className='bg-black disabled:bg-black/40 text-white w-full rounded-lg py-3 mt-2'
+          onClick={() => handleSignIn()}
+          disabled={!hasUserAnAccount}>
+          Log in
+        </button>
         <div className='text-center'>
-          <a className='font-light text-xs underline underline-offset-4' href='/'>Forgot my password</a>
+          <a className='font-light text-xs underline underline-offset-4 cursor-pointer' onClick={() => {}}>Forgot my password</a>
         </div>
         <button
           className='border border-black disabled:text-black/40 disabled:border-black/40 rounded-lg py-3 w-full'
@@ -108,13 +114,12 @@ function SignIn() {
             className='rounded-lg border border-black placeholder:font-light placeholder:text-sm placeholder:text-black/60 focus:outline-none py-2 px-4'
           />
         </div>
-        <Link to="/">
-          <button
-            className='bg-black text-white w-full rounded-lg py-3'
-            onClick={() => createAnAccount()}>
-            Create
-          </button>
-        </Link>
+        <button
+          type="button"
+          className='bg-black text-white w-full rounded-lg py-3'
+          onClick={(e) => createAnAccount(e)}>
+          Create
+        </button>
       </form>
     )
   }
@@ -128,5 +133,3 @@ function SignIn() {
     </Layout>
   )
 }
-
-export default SignIn

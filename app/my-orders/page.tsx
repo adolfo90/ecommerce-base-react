@@ -1,10 +1,12 @@
-import { useContext } from 'react'
-import { Link } from 'react-router-dom'
-import Layout from '../../Components/Layout'
-import { ShoppingCartContext } from '../../Context'
-import OrdersCard from '../../Components/OrdersCard'
+'use client'
 
-function MyOrders() {
+import { useContext } from 'react'
+import Link from 'next/link'
+import { ShoppingCartContext } from '@/app/providers'
+import Layout from '@/app/components/Layout'
+import OrdersCard from '@/app/components/OrdersCard'
+
+export default function MyOrders() {
   const context = useContext(ShoppingCartContext)
 
   return (
@@ -14,8 +16,8 @@ function MyOrders() {
       </div>
       <div className='w-11/12 sm:w-96 md:w-full md:max-w-screen-lg px-4 sm:px-0'>
         {
-          context.order.map((order, index) => (
-            <Link key={index} to={`/my-orders/${index}`}>
+          context?.order?.map((order, index) => (
+            <Link key={index} href={`/my-orders/${index}`}>
               <OrdersCard
                 totalPrice={order.totalPrice}
                 totalProducts={order.totalProducts} />
@@ -26,5 +28,3 @@ function MyOrders() {
     </Layout>
   )
 }
-
-export default MyOrders

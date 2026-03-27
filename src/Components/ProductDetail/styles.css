@@ -3,3 +3,14 @@
   height: calc(100vh - 68px);
   top: 68px;
 }
+
+@media (max-width: 768px) {
+  .product-detail {
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    z-index: 50;
+    border: none;
+    border-radius: 0;
+  }
+}
