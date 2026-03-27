@@ -13,13 +13,13 @@ function MyOrder() {
 
   return (
     <Layout>
-      <div className='flex items-center justify-center relative w-80 mb-6'>
-        <Link to='/my-orders' className='absolute left-0'>
+      <div className='flex items-center justify-center relative w-11/12 sm:w-96 md:w-full md:max-w-screen-lg mb-6 px-4'>
+        <Link to='/my-orders' className='absolute left-0 sm:left-auto'>
           <ChevronLeftIcon className='h-6 w-6 text-black cursor-pointer' />
         </Link>
-        <h1>My Order</h1>
+        <h1 className='font-medium text-lg sm:text-xl'>My Order</h1>
       </div>
-      <div className='flex flex-col w-80'>
+      <div className='flex flex-col w-11/12 sm:w-96 md:w-full md:max-w-screen-lg px-4 sm:px-0'>
         {
           context.order?.[index]?.products.map(product => (
             <OrderCard
